@@ -9,8 +9,8 @@
             <!-- Parámetros de Conexión (PostgreSQL Prisma) -->
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver"/>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://db.prisma.io:5432/postgres?sslmode=require"/>
-            <property name="jakarta.persistence.jdbc.user" value="7df8186a9ab343efd6cea396cce5e5e686128bcd9b5a436953abbb2f39a855f3"/>
-            <property name="jakarta.persistence.jdbc.password" value="sk_c6uoI0Nn9xO5NsaYa91Pj"/>
+            <property name="jakarta.persistence.jdbc.user" value="6026790b512ea4ad2d58c089ccc1eab8460626a6d00c27d92604e703fa5577a7"/>
+            <property name="jakarta.persistence.jdbc.password" value="sk_LRy5L9INrPBMTeOtrEvEj"/>
 
             <!-- Configuración Hibernate -->
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
