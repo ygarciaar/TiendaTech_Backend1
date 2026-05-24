@@ -23,7 +23,7 @@ public class Main {
     private static UsuarioRepository usuarioRepo;
 
     public static void main(String[] args) {
-        em = JpaUtil.getEntityManager();
+        em = JpaUtil.getEntityManagerFactory().createEntityManager();
         detallePedidoRepo = new DetallePedidoRepository(em);
         pedidoRepo = new PedidoRepository(em);
         productoRepo = new ProductoRepository(em);
@@ -57,7 +57,11 @@ public class Main {
                 default -> System.out.println("Opción no válida.");
             }
         }
-        JpaUtil.close();
+        // Close EntityManager and EntityManagerFactory
+        if (em != null && em.isOpen()) {
+            em.close();
+        }
+        JpaUtil.getEntityManagerFactory().close();
         System.out.println("Saliendo...");
     }
 
@@ -304,5 +308,4 @@ public class Main {
             }
         }
     }
-
 }
