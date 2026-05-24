@@ -1,34 +1,49 @@
 package com.example;
 
-import com.example.repository.ProductRepository;
-import com.example.repository.ClientRepository;
-import com.example.repository.EmployeeRepository;
+import java.util.Date;
 
+import com.example.repository.DetallePedidoRepository;
+import com.example.repository.PedidoRepository;
+import com.example.repository.ProductoRepository;
+import com.example.repository.ProveedorRepository;
+import com.example.repository.UsuarioRepository;
 import com.example.util.JpaUtil;
+
 import jakarta.persistence.EntityManager;
 
 import java.util.Scanner;
 import java.util.Optional;
 
+import org.hibernate.boot.registry.selector.spi.StrategyCreator;
+
+import jdk.jfr.Description;
+
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
     private static EntityManager em;
-    private static ProductRepository productRepo;
-    private static ClientRepository clientRepo;
-    private static EmployeeRepository employeeRepo;
+    private static DetallePedidoRepository detallePedidoRepo;
+    private static PedidoRepository pedidoRepo;
+    private static ProductoRepository productoRepo;
+    private static ProveedorRepository proveedorRepo;
+    private static UsuarioRepository usuarioRepo;
 
     public static void main(String[] args) {
         em = JpaUtil.getEntityManager();
-        productRepo = new ProductRepository(em);
-        clientRepo = new ClientRepository(em);
-        employeeRepo = new EmployeeRepository(em);
+        detallePedidoRepo = new DetallePedidoRepository(em);
+        pedidoRepo = new PedidoRepository(em);
+        productoRepo = new ProductoRepository(em);
+        proveedorRepo = new ProveedorRepository(em);
+        usuarioRepo = new UsuarioRepository(em);
+    
 
         boolean exit = false;
         while (!exit) {
             System.out.println("\n--- MENÚ PRINCIPAL ---");
             System.out.println("1. Gestionar Productos");
-            System.out.println("2. Gestionar Clientes");
-            System.out.println("3. Gestionar Empleados");
+            System.out.println("2. Gestionar Usuarios");
+            System.out.println("3. Gestionar Pedidos");
+            System.out.println("4. Gestionar Proveedores");
+            System.out.println("5. Gestionar Detalles de Pedido");
 
             System.out.println("0. Salir");
             System.out.print("Seleccione una opción: ");
@@ -37,9 +52,11 @@ public class Main {
             scanner.nextLine(); // Consume newline
 
             switch (option) {
-                case 1 -> menuProducts();
-                case 2 -> menuClients();
-                case 3 -> menuEmployees();
+                case 1 -> menuProductos();
+                case 2 -> menuUsuarios();
+                case 3 -> menuPedidos();
+                case 4 -> menuProveedores();
+                case 5 -> menuDetallesPedido();
 
                 case 0 -> exit = true;
                 default -> System.out.println("Opción no válida.");
@@ -49,7 +66,7 @@ public class Main {
         System.out.println("Saliendo...");
     }
 
-    private static void menuProducts() {
+    private static void menuProductos() {
         System.out.println("\n--- GESTIÓN DE PRODUCTOS ---");
         System.out.println("1. Crear");
         System.out.println("2. Listar");
@@ -61,44 +78,48 @@ public class Main {
         switch (opt) {
             case 1 -> {
                 System.out.print("Nombre: ");
-                String name = scanner.nextLine();
+                String nombre = scanner.nextLine();
+                System.out.print("Descripción: ");
+                String descripcion = scanner.nextLine();
                 System.out.print("Precio: ");
-                double price = scanner.nextDouble();
+                double precio = scanner.nextDouble();
                 System.out.print("Stock: ");
                 int stock = scanner.nextInt();
-                productRepo.save(new Product(name, price, stock));
+                productoRepo.save(new Producto(nombre, descripcion, precio, stock));
                 System.out.println("Producto guardado.");
             }
-            case 2 -> productRepo.findAll().forEach(System.out::println);
+            case 2 -> productoRepo.findAll().forEach(System.out::println);
             case 3 -> {
                 System.out.print("ID a actualizar: ");
                 long id = scanner.nextLong();
                 scanner.nextLine();
-                Optional<Product> p = productRepo.findById(id);
+                Optional<Producto> p = productoRepo.findById(id);
                 p.ifPresentOrElse(prod -> {
                     System.out.print("Nuevo nombre: ");
-                    prod.setName(scanner.nextLine());
+                    prod.setNombre(scanner.nextLine());
+                    System.out.print("Nueva descripción: ");
+                    prod.setDescripcion(scanner.nextLine());
                     System.out.print("Nuevo precio: ");
-                    prod.setPrice(scanner.nextDouble());
+                    prod.setPrecio(scanner.nextDouble());
                     System.out.print("Nuevo stock: ");
                     prod.setStock(scanner.nextInt());
-                    productRepo.update(prod);
+                    productoRepo.update(prod);
                     System.out.println("Producto actualizado.");
                 }, () -> System.out.println("No encontrado."));
             }
             case 4 -> {
                 System.out.print("ID a eliminar: ");
                 long id = scanner.nextLong();
-                productRepo.findById(id).ifPresentOrElse(prod -> {
-                    productRepo.delete(prod);
+                productoRepo.findById(id).ifPresentOrElse(prod -> {
+                    productoRepo.delete(prod);
                     System.out.println("Producto eliminado.");
                 }, () -> System.out.println("No encontrado."));
             }
         }
     }
 
-    private static void menuClients() {
-        System.out.println("\n--- GESTIÓN DE CLIENTES ---");
+    private static void menuUsuarios() {
+        System.out.println("\n--- GESTIÓN DE USUARIOS ---");
         System.out.println("1. Crear");
         System.out.println("2. Listar");
         System.out.println("3. Actualizar");
@@ -109,43 +130,51 @@ public class Main {
         switch (opt) {
             case 1 -> {
                 System.out.print("Nombre: ");
-                String name = scanner.nextLine();
+                String nombre = scanner.nextLine();
                 System.out.print("Email: ");
                 String email = scanner.nextLine();
+                System.err.println("Contraseña: ");
+                String contraseña = scanner.nextLine();
+                System.out.print("Dirección: ");
+                String direccion = scanner.nextLine();
                 System.out.print("Teléfono: ");
-                String phone = scanner.nextLine();
-                clientRepo.save(new Client(name, email, phone));
+                String telefono = scanner.nextLine();
+                usuarioRepo.save(new Usuario(nombre, email, contraseña, direccion, telefono));
                 System.out.println("Cliente guardado.");
             }
-            case 2 -> clientRepo.findAll().forEach(System.out::println);
+            case 2 -> usuarioRepo.findAll().forEach(System.out::println);
             case 3 -> {
                 System.out.print("ID a actualizar: ");
                 long id = scanner.nextLong();
                 scanner.nextLine();
-                clientRepo.findById(id).ifPresentOrElse(c -> {
+                usuarioRepo.findById(id).ifPresentOrElse(u -> {
                     System.out.print("Nuevo nombre: ");
-                    c.setName(scanner.nextLine());
+                    u.setNombre(scanner.nextLine());
                     System.out.print("Nuevo email: ");
-                    c.setEmail(scanner.nextLine());
+                    u.setEmail(scanner.nextLine());
+                    System.out.print("Nueva contraseña: ");
+                    u.setContaseña(scanner.nextLine());
+                    System.out.print("Nueva dirección: ");
+                    u.setDireccion(scanner.nextLine());
                     System.out.print("Nuevo teléfono: ");
-                    c.setPhone(scanner.nextLine());
-                    clientRepo.update(c);
+                    u.setTelefono(scanner.nextLine());
+                    usuarioRepo.update(u);
                     System.out.println("Cliente actualizado.");
                 }, () -> System.out.println("No encontrado."));
             }
             case 4 -> {
                 System.out.print("ID a eliminar: ");
                 long id = scanner.nextLong();
-                clientRepo.findById(id).ifPresentOrElse(c -> {
-                    clientRepo.delete(c);
+                usuarioRepo.findById(id).ifPresentOrElse(u -> {
+                    usuarioRepo.delete(u);
                     System.out.println("Cliente eliminado.");
                 }, () -> System.out.println("No encontrado."));
             }
         }
     }
 
-    private static void menuEmployees() {
-        System.out.println("\n--- GESTIÓN DE EMPLEADOS ---");
+    private static void menuPedidos() {
+        System.out.println("\n--- GESTIÓN DE PEDIDOS ---");
         System.out.println("1. Crear");
         System.out.println("2. Listar");
         System.out.println("3. Actualizar");
@@ -155,37 +184,37 @@ public class Main {
         scanner.nextLine();
         switch (opt) {
             case 1 -> {
-                System.out.print("Nombre: ");
-                String name = scanner.nextLine();
-                System.out.print("Cargo: ");
-                String pos = scanner.nextLine();
-                System.out.print("Salario: ");
-                double sal = scanner.nextDouble();
-                employeeRepo.save(new Employee(name, pos, sal));
-                System.out.println("Empleado guardado.");
+                System.out.print("Fecha: ");
+                Date fecha = new Date();
+                System.out.print("Total: ");
+                Double total = scanner.nextDouble();
+                System.out.print("Estado: ");
+                String estado = scanner.nextLine();
+                pedidoRepo.save(new Pedido(fecha, total, estado));
+                System.out.println("Pedido guardado.");
             }
-            case 2 -> employeeRepo.findAll().forEach(System.out::println);
+            case 2 -> pedidoRepo.findAll().forEach(System.out::println);
             case 3 -> {
                 System.out.print("ID a actualizar: ");
                 long id = scanner.nextLong();
                 scanner.nextLine();
-                employeeRepo.findById(id).ifPresentOrElse(e -> {
-                    System.out.print("Nuevo nombre: ");
-                    e.setName(scanner.nextLine());
-                    System.out.print("Nuevo cargo: ");
-                    e.setPosition(scanner.nextLine());
-                    System.out.print("Nuevo salario: ");
-                    e.setSalary(scanner.nextDouble());
-                    employeeRepo.update(e);
-                    System.out.println("Empleado actualizado.");
+                pedidoRepo.findById(id).ifPresentOrElse(p -> {
+                    System.out.print("Nueva fecha: ");
+                    p.setFecha(new Date());
+                    System.out.print("Nuevo total: ");
+                    p.setTotal(scanner.nextDouble());
+                    System.out.print("Nuevo estado: ");
+                    p.setEstado(scanner.nextLine());
+                    pedidoRepo.update(p);
+                    System.out.println("Pedido actualizado.");
                 }, () -> System.out.println("No encontrado."));
             }
             case 4 -> {
                 System.out.print("ID a eliminar: ");
                 long id = scanner.nextLong();
-                employeeRepo.findById(id).ifPresentOrElse(e -> {
-                    employeeRepo.delete(e);
-                    System.out.println("Empleado eliminado.");
+                pedidoRepo.findById(id).ifPresentOrElse(p -> {
+                    pedidoRepo.delete(p);
+                    System.out.println("Pedido eliminado.");
                 }, () -> System.out.println("No encontrado."));
             }
         }

@@ -1,9 +1,12 @@
 <persistence xmlns="https://jakarta.ee/xml/ns/persistence" version="3.0">
     <persistence-unit name="miUnidadPersistencia">
 
-        <class>com.example.Product</class>
-        <class>com.example.Client</class>
-        <class>com.example.Employee</class>
+        <class>com.example.Producto</class>
+        <class>com.example.Usuario</class>      
+        <class>com.example.Proveedor</class>
+        <class>com.example.pedido</class>
+        <class>com.example.DetallePedido</class>
+
 
         <properties>
             <!-- Parámetros de Conexión (PostgreSQL Prisma) -->
