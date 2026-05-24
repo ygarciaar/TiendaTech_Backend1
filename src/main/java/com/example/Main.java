@@ -1,6 +1,8 @@
 package com.example;
 
 import java.util.Date;
+import java.util.Optional;
+import java.util.Scanner;
 
 import com.example.repository.DetallePedidoRepository;
 import com.example.repository.PedidoRepository;
@@ -10,13 +12,6 @@ import com.example.repository.UsuarioRepository;
 import com.example.util.JpaUtil;
 
 import jakarta.persistence.EntityManager;
-
-import java.util.Scanner;
-import java.util.Optional;
-
-import org.hibernate.boot.registry.selector.spi.StrategyCreator;
-
-import jdk.jfr.Description;
 
 public class Main {
     private static final Scanner scanner = new Scanner(System.in);
@@ -215,6 +210,96 @@ public class Main {
                 pedidoRepo.findById(id).ifPresentOrElse(p -> {
                     pedidoRepo.delete(p);
                     System.out.println("Pedido eliminado.");
+                }, () -> System.out.println("No encontrado."));
+            }
+        }
+    }
+
+    private static void menuProveedores() {
+        System.out.println("\n--- GESTIÓN DE PROVEEDORES ---");
+        System.out.println("1. Crear");
+        System.out.println("2. Listar");
+        System.out.println("3. Actualizar");
+        System.out.println("4. Eliminar");
+        System.out.print("Opción: ");
+        int opt = scanner.nextInt();
+        scanner.nextLine();
+        switch (opt) {
+            case 1 -> {
+                System.out.print("NombreEmpresa: ");
+                String nombreEmpresa = scanner.nextLine();
+                System.out.print("Email: ");
+                String email = scanner.nextLine();
+                System.out.print("Teléfono: ");
+                String telefono = scanner.nextLine();
+                proveedorRepo.save(new Proveedor(nombreEmpresa, email, telefono));
+                System.out.println("Proveedor guardado.");
+            }
+            case 2 -> proveedorRepo.findAll().forEach(System.out::println);
+            case 3 -> {
+                System.out.print("ID a actualizar: ");
+                long id = scanner.nextLong();
+                scanner.nextLine();
+                proveedorRepo.findById(id).ifPresentOrElse(p -> {
+                    System.out.print("Nuevo nombreEmpresa: ");
+                    p.setNombreEmpresa(scanner.nextLine());
+                    System.out.print("Nuevo email: ");
+                    p.setEmail(scanner.nextLine());
+                    System.out.print("Nuevo teléfono: ");
+                    p.setTelefono(scanner.nextLine());
+                    proveedorRepo.update(p);
+                    System.out.println("Proveedor actualizado.");
+                }, () -> System.out.println("No encontrado."));
+            }
+            case 4 -> {
+                System.out.print("ID a eliminar: ");
+                long id = scanner.nextLong();
+                proveedorRepo.findById(id).ifPresentOrElse(p -> {
+                    proveedorRepo.delete(p);
+                    System.out.println("Proveedor eliminado.");
+                }, () -> System.out.println("No encontrado."));
+            }
+        }
+    }
+
+    private static void menuDetallesPedido() {
+        System.out.println("\n--- GESTIÓN DE DETALLES DE PEDIDO ---");
+        System.out.println("1. Crear");
+        System.out.println("2. Listar");
+        System.out.println("3. Actualizar");
+        System.out.println("4. Eliminar");
+        System.out.print("Opción: ");
+        int opt = scanner.nextInt();
+        scanner.nextLine();
+        switch (opt) {
+            case 1 -> {
+                System.out.print("Cantidad: ");
+                int cantidad = scanner.nextInt();
+                System.out.print("PrecioUnitario: ");
+                double precioUnitario = scanner.nextDouble();
+                detallePedidoRepo.save(new DetallePedido(cantidad, precioUnitario));
+                System.out.println("Detalle de pedido guardado.");
+            }
+            case 2 -> detallePedidoRepo.findAll().forEach(System.out::println);
+            case 3 -> {
+                System.out.print("ID a actualizar: ");
+                long id = scanner.nextLong();
+                scanner.nextLine();
+                detallePedidoRepo.findById(id).ifPresentOrElse(d -> {
+                    System.out.print("Nueva cantidad: ");
+                    d.setCantidad(scanner.nextInt());
+                    System.out.print("Nuevo precio unitario: ");
+                    d.setPrecioUnitario(scanner.nextDouble());
+                    detallePedidoRepo.update(d);
+                    System.out.println("Detalle de pedido actualizado.");
+                }, () -> System.out.println("No encontrado."));
+            }
+            case 4 -> {
+                System.out.print("ID a eliminar: ");
+                long id = scanner.nextLong();
+                detallePedidoRepo.findById(id).ifPresentOrElse(d -> {
+                    detallePedidoRepo.delete(d);
+                    System.out.println("Detalle de pedido eliminado.");
                 }, () -> System.out.println("No encontrado."));
             }
         }
