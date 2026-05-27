@@ -15,8 +15,8 @@ public class JpaUtil {
             Map<String, String> properties = new HashMap<>();
             properties.put("jakarta.persistence.jdbc.driver", "org.postgresql.Driver");
             properties.put("jakarta.persistence.jdbc.url", "jdbc:postgresql://pooled.db.prisma.io:5432/postgres?sslmode=require");
-            properties.put("jakarta.persistence.jdbc.user", "65f4ab1ae8604fb348c505efcba9625b6ad3e8e92b5f9701056115c77ffc7f22");
-            properties.put("jakarta.persistence.jdbc.password", "sk_4RemiUQmMePowhwnqua_A");
+            properties.put("jakarta.persistence.jdbc.user", "e452e9cb36b2eb9021f488a13556d02b129c4c6c730dca90145ed96ab912ed81");
+            properties.put("jakarta.persistence.jdbc.password", "sk_Hrz0SbPagi2ns83JzRRU3");
             
             properties.put("hibernate.show_sql", "true");
             properties.put("hibernate.format_sql", "true");
