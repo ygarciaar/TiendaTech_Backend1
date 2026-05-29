@@ -19,7 +19,7 @@
             <property name="jakarta.persistence.jdbc.driver" value="org.postgresql.Driver" />
             <property name="jakarta.persistence.jdbc.url" value="jdbc:postgresql://pooled.db.prisma.io:5432/postgres?sslmode=require" />
             <property name="jakarta.persistence.jdbc.user" value="e452e9cb36b2eb9021f488a13556d02b129c4c6c730dca90145ed96ab912ed81" />
-            <property name="jakarta.persistence.jdbc.password" value="sk_GH_pb6hRHVn9VxLc65ZUS" />
+            <property name="jakarta.persistence.jdbc.password" value="sk_4uoByUNFi3ufJXy5qsK5n" />
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
             <property name="hibernate.show_sql" value="true" />
